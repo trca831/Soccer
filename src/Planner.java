@@ -35,7 +35,6 @@ public class Planner {
         return command.trim().toLowerCase();
     }
 
-
     public void run() {
         String command = "";
 
@@ -99,7 +98,7 @@ public class Planner {
         return new Team(teamName, coachName);
     }
 
-    private void balanceReport() {
+    private void balanceReport() throws IOException{
         Map<String, int[]> balance = new HashMap<String, int[]>();
         for (Team team : mTeams) {
             int expCount = 0;
@@ -130,7 +129,7 @@ public class Planner {
         }
     }
 
-    private void displayMyTeam(Team team) {
+    private void displayMyTeam(Team team) throws IOException{
         System.out.printf("Player Roster for Team: %s%n", team.getTeamName());
 
         for (Player player : team.getPlayers()) {
@@ -143,7 +142,7 @@ public class Planner {
         }
     }
 
-    private void heightRanges(Team team) {
+    private void heightRanges(Team team) throws IOException{
         List<Player> height35to40 = new ArrayList<Player>();
         List<Player> height41to46 = new ArrayList<Player>();
         List<Player> height47andUp = new ArrayList<Player>();
@@ -180,7 +179,7 @@ public class Planner {
             );
         }
 
-        System.out.println("***47 Inches or Above: ***%n");
+        System.out.println("***47-50 Inches: ***%n");
         for (Player player : height47andUp) {
             System.out.println(
                     player.getFirstName() + " " +
@@ -207,10 +206,21 @@ public class Planner {
 
     private Player promptForChoosePlayer() throws IOException {
         Player[] players = Players.load();
-        Arrays.sort(players);
-        List<String> playersAvailable = new ArrayList<String>();
 
-        for (Player player : players) {
+        Set<Player> assignedPlayers = new HashSet<Player>();
+        for(Team team : mTeams) {
+            assignedPlayers.addAll(team.getPlayers());
+        }
+        List<Player> availablePlayers = new ArrayList<Player>();
+        List<String> playersAvailable = new ArrayList<String>();
+        for (Player player : players){
+            if(!assignedPlayers.contains(player)){
+                availablePlayers.add(player);
+            }
+        }
+        availablePlayers.sort(null);
+
+        for (Player player : availablePlayers) {
             playersAvailable.add(
                     player.getFirstName() + " " +
                             player.getLastName() +
@@ -221,11 +231,14 @@ public class Planner {
 
         System.out.println("These are the available players:");
         int index = promptForIndex(playersAvailable);
-        return players[index];
+        return availablePlayers.get(index);
     }
 
     private Player promptForPlayerRemoval(Team team) throws IOException {
         List<Player> players = new ArrayList<Player>(team.getPlayers());
+
+        players.sort(null);
+
         List<String> playersAvailable = new ArrayList<String>();
 
         for (Player player : players) {
@@ -245,6 +258,7 @@ public class Planner {
 
     private int promptForIndex(List<String> options) throws IOException {
         int counter = 1;
+
         for (String option : options) {
             System.out.printf("%d)  %s %n", counter++, option);
         }
