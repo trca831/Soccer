@@ -22,6 +22,20 @@ public class Team {
         return mCoachName;
     }
 
+    public void addSelectedPlayer(Player player) {
+        if (mPlayers.size() >= 11) {
+            System.out.println("Stop. A team cannot exceed 11 players!");
+
+        } else {
+            mPlayers.add(player);
+            System.out.printf(
+                    "Player added: %s %s%n",
+                    player.getFirstName(),
+                    player.getLastName()
+            );
+        }
+    }
+
     @Override
     public String toString() {
         return String.format("%n Team's Name: %s %n Coach's Name: %s", mTeamName, mCoachName);
