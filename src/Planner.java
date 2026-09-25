@@ -98,7 +98,7 @@ public class Planner {
         return new Team(teamName, coachName);
     }
 
-    private void balanceReport() throws IOException{
+    private void balanceReport() throws IOException {
         Map<String, int[]> balance = new HashMap<String, int[]>();
         for (Team team : mTeams) {
             int expCount = 0;
@@ -129,7 +129,7 @@ public class Planner {
         }
     }
 
-    private void displayMyTeam(Team team) throws IOException{
+    private void displayMyTeam(Team team) throws IOException {
         System.out.printf("Player Roster for Team: %s%n", team.getTeamName());
 
         for (Player player : team.getPlayers()) {
@@ -142,7 +142,7 @@ public class Planner {
         }
     }
 
-    private void heightRanges(Team team) throws IOException{
+    private void heightRanges(Team team) throws IOException {
         List<Player> height35to40 = new ArrayList<Player>();
         List<Player> height41to46 = new ArrayList<Player>();
         List<Player> height47andUp = new ArrayList<Player>();
@@ -208,13 +208,13 @@ public class Planner {
         Player[] players = Players.load();
 
         Set<Player> assignedPlayers = new HashSet<Player>();
-        for(Team team : mTeams) {
+        for (Team team : mTeams) {
             assignedPlayers.addAll(team.getPlayers());
         }
         List<Player> availablePlayers = new ArrayList<Player>();
         List<String> playersAvailable = new ArrayList<String>();
-        for (Player player : players){
-            if(!assignedPlayers.contains(player)){
+        for (Player player : players) {
+            if (!assignedPlayers.contains(player)) {
                 availablePlayers.add(player);
             }
         }
