@@ -1,7 +1,6 @@
 import com.teamtreehouse.model.Player;
 import com.teamtreehouse.model.Players;
 
-
 public class LeagueManager {
 
     public static void main(String[] args) {

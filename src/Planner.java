@@ -20,6 +20,8 @@ public class Planner {
         mMenu.put("add", "ADD A PLAYER to Team");
         mMenu.put("remove", "REMOVE A PLAYER from Team");
         mMenu.put("height", "View Team's Height Report");
+        mMenu.put("balance", "View League Balance Report");
+        mMenu.put("print", "Print Current Roster");
         mMenu.put("quit", "Done planning. Exit the program");
     }
 
@@ -30,7 +32,6 @@ public class Planner {
 
         System.out.print("What do you want to do: ");
         String command = mReader.readLine();
-
         return command.trim().toLowerCase();
     }
 
@@ -41,7 +42,6 @@ public class Planner {
         do {
             try {
                 command = promptAction();
-
                 switch (command) {
 
                     case "create":
@@ -56,7 +56,6 @@ public class Planner {
                         teamAddPlayer.addSelectedPlayer(selectedPlayer);
                         break;
 
-
                     case "remove":
                         Team teamRemovePlayer = promptForChooseTeam();
                         Player playerToRemove = promptForPlayerRemoval(teamRemovePlayer);
@@ -66,6 +65,15 @@ public class Planner {
                     case "height":
                         Team teamHeight = promptForChooseTeam();
                         heightRanges(teamHeight);
+                        break;
+
+                    case "balance":
+                        balanceReport();
+                        break;
+
+                    case "print":
+                        Team teamRoster = promptForChooseTeam();
+                        displayMyTeam(teamRoster);
                         break;
 
                     case "quit":
@@ -79,6 +87,7 @@ public class Planner {
                 System.out.println("Problem with input");
                 ioe.printStackTrace();
             }
+
         } while (!command.equals("quit"));
     }
 
@@ -88,11 +97,53 @@ public class Planner {
         System.out.print("Enter the coach's name:  ");
         String coachName = mReader.readLine();
         return new Team(teamName, coachName);
+    }
 
+    private void balanceReport() {
+        Map<String, int[]> balance = new HashMap<String, int[]>();
+        for (Team team : mTeams) {
+            int expCount = 0;
+            int inExpCount = 0;
+
+            for (Player player : team.getPlayers()) {
+                if (player.isPreviousExperience()) {
+                    expCount++;
+                } else {
+                    inExpCount++;
+                }
+            }
+            balance.put(
+                    team.getTeamName(),
+                    new int[]{expCount, inExpCount}
+            );
+        }
+
+        System.out.println("League Balance Report");
+
+        for (Team team : mTeams) {
+            int[] counts = balance.get(team.getTeamName());
+
+            System.out.println("Team: " + team.getTeamName());
+            System.out.println("Players with Experience: " + counts[0]);
+            System.out.println("Players with No Experience: " + counts[1]);
+            System.out.println(" ");
+        }
+    }
+
+    private void displayMyTeam(Team team) {
+        System.out.printf("Player Roster for Team: %s%n", team.getTeamName());
+
+        for (Player player : team.getPlayers()) {
+            System.out.println(
+                    player.getFirstName() + " " +
+                            player.getLastName() +
+                            " --> Height: " + player.getHeightInInches() +
+                            " --> Previous Experience: " + player.isPreviousExperience()
+            );
+        }
     }
 
     private void heightRanges(Team team) {
-
         List<Player> height35to40 = new ArrayList<Player>();
         List<Player> height41to46 = new ArrayList<Player>();
         List<Player> height47andUp = new ArrayList<Player>();
@@ -103,7 +154,8 @@ public class Planner {
                     player.getHeightInInches() <= 40) {
                 height35to40.add(player);
 
-            } else if (player.getHeightInInches() >= 41 && player.getHeightInInches() <= 46) {
+            } else if (player.getHeightInInches() >= 41 &&
+                    player.getHeightInInches() <= 46) {
                 height41to46.add(player);
 
             } else {
@@ -141,7 +193,6 @@ public class Planner {
         mTeams.sort(null);
     }
 
-
     private Team promptForChooseTeam() throws IOException {
         sortTeamsAlphabetically();
         List<String> chooseTeams = new ArrayList<String>();
@@ -155,11 +206,8 @@ public class Planner {
     }
 
     private Player promptForChoosePlayer() throws IOException {
-
         Player[] players = Players.load();
-
         Arrays.sort(players);
-
         List<String> playersAvailable = new ArrayList<String>();
 
         for (Player player : players) {

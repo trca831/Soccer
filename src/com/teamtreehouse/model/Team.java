@@ -3,7 +3,7 @@ package com.teamtreehouse.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Team implements Comparable<Team>{
+public class Team implements Comparable<Team> {
     private String mTeamName;
     private String mCoachName;
     private Set<Player> mPlayers;
