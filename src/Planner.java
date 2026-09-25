@@ -5,10 +5,7 @@ import com.teamtreehouse.model.Team;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Planner {
     private List<Team> mTeams;
@@ -19,8 +16,9 @@ public class Planner {
         mTeams = new ArrayList<Team>();
         mReader = new BufferedReader(new InputStreamReader(System.in));
         mMenu = new HashMap<String, String>();
-        mMenu.put("create", "Add a new Team to the Planner!");
-        mMenu.put("add", "Add a Player to Team");
+        mMenu.put("create", "ADD A NEW TEAM to the Planner!");
+        mMenu.put("add", "ADD A PLAYER to Team");
+        mMenu.put("remove", "REMOVE A PLAYER from Team");
         mMenu.put("quit", "Done planning. Exit the program");
     }
 
@@ -52,10 +50,16 @@ public class Planner {
                         break;
 
                     case "add":
-                        Team chooseTeam = promptForChooseTeam();
+                        Team teamAddPlayer = promptForChooseTeam();
                         Player selectedPlayer = promptForChoosePlayer();
-                        chooseTeam.addSelectedPlayer(selectedPlayer);
+                        teamAddPlayer.addSelectedPlayer(selectedPlayer);
+                        break;
 
+
+                    case "remove":
+                        Team teamRemovePlayer = promptForChooseTeam();
+                      Player playerToRemove = promptForPlayerRemoval(teamRemovePlayer);
+                      teamRemovePlayer.removeSelectedPlayer(playerToRemove);
                         break;
 
 
@@ -82,8 +86,14 @@ public class Planner {
 
     }
 
-    private Team promptForChooseTeam() throws IOException {
+    private void sortTeamsAlphabetically() {
+        mTeams.sort(null);
+    }
 
+
+
+    private Team promptForChooseTeam() throws IOException {
+        sortTeamsAlphabetically();
         List<String> chooseTeams = new ArrayList<String>();
 
         for (Team currentTeam : mTeams) {
@@ -91,23 +101,48 @@ public class Planner {
         }
 
         int index = promptForIndex(chooseTeams);
-
         return mTeams.get(index);
     }
 
     private Player promptForChoosePlayer() throws IOException {
+
+
         Player[] players = Players.load();
+
+        Arrays.sort(players);
+
         List<String> playersAvailable = new ArrayList<String>();
 
         for (Player player : players) {
             playersAvailable.add(
-                    player.getFirstName() + " " + player.getLastName()
+                    player.getFirstName() + " " +
+                            player.getLastName() +
+                            " --> Height: " + player.getHeightInInches() +
+                            " --> Previous Experience: " + player.isPreviousExperience()
             );
         }
 
         System.out.println("These are the available players:");
         int index = promptForIndex(playersAvailable);
         return players[index];
+    }
+
+    private Player promptForPlayerRemoval(Team team) throws IOException {
+        List<Player> players = new ArrayList<Player>(team.getPlayers());
+        List<String> playersAvailable = new ArrayList<String>();
+
+        for (Player player : players) {
+            playersAvailable.add(
+                    player.getFirstName() + " " +
+                            player.getLastName() +
+                            " --> Height: " + player.getHeightInInches() +
+                            " --> Previous Experience: " + player.isPreviousExperience()
+            );
+        }
+
+        System.out.println("These are the players on this team:");
+        int index = promptForIndex(playersAvailable);
+        return players.get(index);
     }
 
 

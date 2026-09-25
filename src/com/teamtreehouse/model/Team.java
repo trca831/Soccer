@@ -3,7 +3,7 @@ package com.teamtreehouse.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Team {
+public class Team implements Comparable<Team>{
     private String mTeamName;
     private String mCoachName;
     private Set<Player> mPlayers;
@@ -22,6 +22,10 @@ public class Team {
         return mCoachName;
     }
 
+    public Set<Player> getPlayers() {
+        return mPlayers;
+    }
+
     public void addSelectedPlayer(Player player) {
         if (mPlayers.size() >= 11) {
             System.out.println("Stop. A team cannot exceed 11 players!");
@@ -34,6 +38,21 @@ public class Team {
                     player.getLastName()
             );
         }
+    }
+
+    public void removeSelectedPlayer(Player player) {
+        mPlayers.remove(player);
+
+        System.out.printf(
+                "Player removed: %s %s%n",
+                player.getFirstName(),
+                player.getLastName()
+        );
+    }
+
+    @Override
+    public int compareTo(Team other) {
+        return mTeamName.compareTo((other.mTeamName));
     }
 
     @Override
